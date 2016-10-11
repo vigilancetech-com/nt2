@@ -1,0 +1,184 @@
+(ns+ guardian-ui.dashboard
+   (:page
+    "index.html")
+  (:refer-clojure
+    :exclude [- test])
+  (:require
+    [javelin.core    :refer [defc defc= cell= cell]]
+    [hoplon.core     :refer [defelem for-tpl when-tpl case-tpl]]
+    [hoplon.ui       :refer [elem image window s b]]
+    [hoplon.ui.elems :refer [markdown]]
+    [hoplon.ui.attrs :refer [- c r d]]))
+
+;;; constants ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def image-host "ftp://cov.us.to")
+(def fs "/")                                ; folder separator
+(def image-path (str "xotic" fs "images"))  ; path to generic images
+(def ximage-path (str image-path fs "xpc")) ; path to xotic specific images
+(def image-ext "svg")                       ; extension for generic images
+(def ximage-ext "png")                      ; extension for xotic specific images
+
+
+(defn fpx [file-name]
+  "(since the xotic specific icons/images can be nested) given the vector of the path
+and file name,  return the full path string from file-name with xotic default extension"
+  (str image-host fs ximage-path (reduce str (map #(str fs % ) file-name)) "." ximage-ext))
+
+(defn fpg [file-name]
+  "return the full path string from the file name with generic default extension"
+  (str image-host fs image-path fs file-name "." image-ext))
+
+;; XOTIC specific images/icons ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def title-png (fpx ["title"]))
+(def app_bkgd_1200w (fpx ["xpc_app_bkgd_1200w"]))
+(def app_bkgd_400w (fpx ["xpc_app_bkgd_400w"]))
+(def app_bkgd_full_768w (fpx ["xpc_app_bkgd_full_768w"]))
+(def app_bkgd_full (fpx ["xpc_app_bkgd_full"]))
+(def footer_logo   (fpx ["xpc_footer_logo"]))
+(def header_logo   (fpx ["xpc_header_logo"]))
+(def header_off_btn (fpx ["xpc_header_off_btn"]))
+(def header_on_btn (fpx ["xpc_header_on_btn"]))
+
+;;  color_fx folder ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def all_title  (fpx ["color_fx" "all_title"]))
+(def color_picker_title  (fpx ["color_fx" "color_picker_title"]))
+(def custom_preset_1_title  (fpx ["color_fx" "custom_preset_1_title"]))
+(def custom_preset_2_title  (fpx ["color_fx" "custom_preset_2_title"]))
+(def custom_preset_3_title   (fpx ["color_fx" "custom_preset_3_title"]))
+(def custom_regions_title   (fpx ["color_fx" "custom_regions_title"]))
+(def custom_title  (fpx ["color_fx" "custom_title"]))
+(def color_fx-keyboard  (fpx ["color_fx" "keyboard"]))
+(def keyboard_keys_pad  (fpx ["color_fx" "keyboard_keys_pad"]))
+(def preview_title  (fpx ["color_fx" "preview_title"]))
+(def set_color_txt_box  (fpx ["color_fx" "xpc_set_color_txt_box"]))
+(def slider_icon   (fpx ["color_fx" "xpc_slider_icon"]))
+(def slider_path    (fpx ["color_fx" "xpc_slider_path"]))
+(def wide_cross_bkgd  (fpx ["color_fx" "xpc_wide_cross_bkgd"]))
+
+;; keyboard subdir ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def keyboard-all (fpx ["color_fx" "keyboard" "keyboard-all"]))
+(def keyboard_c_panel_inv  (fpx ["color_fx" "keyboard" "keyboard_c_panel_inv"]))
+(def keyboard_c_panel  (fpx ["color_fx" "keyboard" "keyboard_c_panel"]))
+(def keyboard-left  (fpx ["color_fx" "keyboard" "keyboard-left"]))
+(def keyboard  (fpx ["color_fx" "keyboard" "keyboard"]))
+(def keyboard-right  (fpx ["color_fx" "keyboard" "keyboard-right"]))
+(def number-pad   (fpx ["color_fx" "keyboard" "number-pad"]))
+(def trackpad   (fpx ["color_fx" "keyboard" "trackpad"]))
+(def Zone_keyboard_c_panel  (fpx ["color_fx" "keyboard" "Zone keyboard_c_panel"]))
+
+;; main folder ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def fan_icon   (fpx ["main" "fan_icon"]))
+(def fans_title   (fpx ["main" "fans_title"]))
+(def lighting_icon   (fpx ["main" "lighting_icon"]))
+(def lighting_title  (fpx ["main" "lighting_title"]))
+(def settings_icon   (fpx ["main" "settings_icon"]))
+(def settings_title  (fpx ["main" "settings_title"]))
+(def social_media_bkgd  (fpx ["main" "social_media_bkgd"]))
+(def sys_health_icon   (fpx ["main" "sys_health_icon"]))
+(def system_health_title   (fpx ["main" "system_health_title"]))
+(def bkgd_cross   (fpx ["main" "xpc_bkgd_cross"]))
+(def fb_icon   (fpx ["main" "xpc_fb_icon"]))
+(def gplus_icon   (fpx ["main" "xpc_gplus_icon"]))
+(def gram_icon   (fpx ["main" "xpc_gram_icon"]))
+(def tw_icon   (fpx ["main" "xpc_tw_icon"]))
+(def yt_icon  (fpx ["main" "xpc_yt_icon"]))
+
+;; settings folder ;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def cust_serv_title  (fpx ["settings" "xpc_cust_serv_title"]))
+(def remote_access_title  (fpx ["settings" "xpc_remote_access_title"]))
+(def sales_title  (fpx ["settings" "xpc_sales_title"]))
+(def service_title  (fpx ["settings" "xpc_service_title"]))
+(def support_title  (fpx ["settings" "xpc_support_title"]))
+(def warranty_title  (fpx ["settings" "xpc_warranty_title"]))
+
+
+;;  generic images/icons ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def fan2 (fpg "fan2"))
+(def fan2-white (fpg "fan2-white"))
+(def fan-black (fpg "fan-black"))
+(def fan (fpg "fan"))
+(def hard-drive-interior (fpg "hard-drive-interior"))
+(def hard-drive-intrior-white (fpg "hard-drive-interior-white"))
+(def lighting (fpg "lighting"))
+(def settings (fpg "settings"))
+(def ssd-storage (fpg "ssd-storage"))
+(def system-health (fpg "system-health"))
+(def thermometer (fpg "thermometer"))
+(def thermometer-white (fpg "thermometer-white"))
+
+;;; state ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;; service ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;; query ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; command ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;; view styles ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; breakpoints
+
+; sizes
+
+;; colors
+
+
+; fonts
+
+; text
+(defelem html [attrs html]
+  (set! (.-innerHTML (elem attrs)) html))
+
+;;; view components ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;; view views ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; application ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(window
+  :title        "XOTIC"
+  ;:route        route
+  ;:styles       [icon-url font-url]
+  ;:initiated    (partial swap! db initiate)
+  ;:routechanged (partial swap! db change-route)
+                                        ;:ff helvetica :fr :optimizeLegibility :fm :antialiased
+
+  (elem
+   (image :url header_logo)
+   (image :url wide_cross_bkgd)
+   (image :url system_health_title)
+#_   (button "click me")
+   (image :url lighting_title)
+   (image :url fans_title)
+   (image :url all_title)))
+
+#_  (elem :sh (r 1 3) :p 6 :av :mid :b 2 ; :bc stroke-grey
+        (image :s 50 :url header_logo)
+        (elem :pl 6 :f 21 "XOTIC PC Logo"))
+
+  ;(image :url keyboard-keys-pad))
+
+  ;; (when-tpl (b menu-open lg true)
+  ;;   (sidebar :sh 240 :sv (r 1 1) :xl (b menu-open lg false)))
+  ;; (main :sh (b (r 1 1) lg (- (r 1 1) 240)) :sv (r 1 1)
+  ;;   (case-tpl state
+  ;;     :basic      (basic-view)
+  ;;     :event      (event-view)
+  ;;     :events     (events-view)
+  ;;     :project    (project-view)
+  ;;     :projects   (projects-view)
+  ;;     :organizers (organizers-view)
+  ;;     :photo      (photo-view)
+  ;;     :photos     (photos-view)
+  ;;     :notes      (notes-view)))
+  ;; (overlay :xl 240 :xr 0 :sh (r 1 1) :sv (r 1 1) :v (b menu-open lg false)))
